@@ -1,0 +1,226 @@
+﻿@model BusinessModel.ViewLeaveRequestModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@if (Session["UserRole"] != null && Session["UserRole"].ToString().Equals("Employee"))
+{
+    <h3>My Leave Chart</h3>
+    <div class="jumbotron" style="display:flex;">
+        @foreach (var item in Model.LeaveTypes)
+        {
+            <ul class="card col-md-2">
+
+                <li class="list-group-item">
+
+                    <b>
+                        @switch (item.Name)
+                        {
+                            case "EL":
+                                {
+                                    @item.Description
+                                    <span class="badge badge-secondary">Total: @item.DefaultDays</span>
+                                    <span class="badge badge-secondary">Consumed: @Model.EarnedLeave</span>
+                                    var diffCount = @item.DefaultDays - @Model.EarnedLeave;
+                                    <span class="badge badge-secondary">Pending: @diffCount</span>
+                                    break;
+                                }
+                            case "SL":
+                                {
+                                    @item.Description
+                                    <span class="badge badge-secondary">Total: @item.DefaultDays</span>
+                                    <span class="badge badge-secondary">Consumed: @Model.SickLeave</span>
+                                    var diffCount = @item.DefaultDays - @Model.SickLeave;
+                                    <span class="badge badge-secondary">Pending: @diffCount</span>
+                                    break;
+                                }
+                            case "CL":
+                                {
+                                    @item.Description
+                                    <span class="badge badge-secondary">Total: @item.DefaultDays</span>
+                                    <span class="badge badge-secondary">Consumed: @Model.CasualLeave</span>
+                                    var diffCount = @item.DefaultDays - @Model.CasualLeave;
+                                    <span class="badge badge-secondary">Pending: @diffCount</span>
+                                    break;
+                                }
+                            case "PL":
+                                {
+                                    @item.Description
+                                    <span class="badge badge-secondary">Total: @item.DefaultDays</span>
+                                    <span class="badge badge-secondary">Consumed: @Model.PaternityLeave</span>
+                                    var diffCount = @item.DefaultDays - @Model.PaternityLeave;
+                                    <span class="badge badge-secondary">Pending: @diffCount</span>
+                                    break;
+                                }
+                            case "ML":
+                                {
+                                    @item.Description
+                                    <span class="badge badge-secondary">Total: @item.DefaultDays</span>
+                                    <span class="badge badge-secondary">Consumed: @Model.MaternityLeave</span>
+                                    var diffCount = @item.DefaultDays - @Model.MaternityLeave;
+                                    <span class="badge badge-secondary">Pending: @diffCount</span>
+                                    break;
+                                }
+                        }
+                    </b>
+                </li>
+            </ul>
+
+        }
+    </div>
+}
+
+@if (Session["UserRole"] != null && Session["UserRole"].ToString().Equals("Admin"))
+{
+    using (Html.BeginForm("Modify", "LeaveRequest"))
+    {
+        @Html.AntiForgeryToken()
+
+        <h3>My Leave Chart</h3>
+        <div class="jumbotron" style="display:flex;">
+            @foreach (var item in Model.LeaveTypes)
+            {
+                <ul class="card col-md-2">
+
+                    <li class="list-group-item">
+
+                        <b>
+                            @switch (item.Name)
+                            {
+                                case "EL":
+                                    {
+                                        @item.Description
+                                        <span class="form-group">
+                                            <input id="EL" name="EL" type="text" value=@item.DefaultDays size="6" />
+                                            <input id="ELId" name="ELId" type="hidden" value=@item.Id />
+                                        </span>
+                                        break;
+                                    }
+                                case "SL":
+                                    {
+                                        @item.Description
+                                        <span class="form-group">
+                                            <input id="SL" name="SL" type="text" value=@item.DefaultDays size="6" />
+                                            <input id="SLId" name="SLId" type="hidden" value=@item.Id />
+                                        </span>
+                                        break;
+                                    }
+                                case "CL":
+                                    {
+                                        @item.Description
+                                        <span class="form-group">
+                                            <input id="CL" name="CL" type="text" value=@item.DefaultDays size="6" />
+                                            <input id="CLId" name="CLId" type="hidden" value=@item.Id />
+                                        </span>
+                                        break;
+                                    }
+                                case "PL":
+                                    {
+                                        @item.Description
+                                        <span class="form-group">
+                                            <input id="PL" name="PL" type="text" value=@item.DefaultDays size="6" />
+                                            <input id="PLId" name="PLId" type="hidden" value=@item.Id />
+                                        </span>
+                                        break;
+                                    }
+                                case "ML":
+                                    {
+                                        @item.Description
+                                        <span class="form-group">
+                                            <input id="ML" name="ML" type="text" value=@item.DefaultDays size="6" />
+                                            <input id="MLId" name="MLId" type="hidden" value=@item.Id />
+                                        </span>
+                                        break;
+                                    }
+                            }
+                        </b>
+                    </li>
+                </ul>
+            }
+            <br /><br />
+            <div class="form-group">
+                <div class="col-md-offset-6 col-md-6">
+                    <input type="submit" value="Modify" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+
+    }
+}
+
+<hr />
+<h3>Leave Requests</h3>
+<table class="table">
+    <tr>
+        <th>
+            Leave Type
+        </th>
+        <th>
+            From Date
+        </th>
+        <th>
+            To Date
+        </th>
+        <th>
+            No Of Days
+        </th>
+        <th>
+            Reason
+        </th>
+        <th>
+            File
+        </th>
+        <th>
+            Status
+        </th>
+        <th>
+            Approved By
+        </th>
+        @if (Session["UserRole"] != null && Session["UserRole"].ToString().Equals("Admin"))
+        {
+            <th>
+                Action
+            </th>
+        }
+    </tr>
+
+    @foreach (var item in Model.LeaveRequests)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.LeaveTypeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FromDate, new { @value = item.FromDate.ToString("yyyy-mm-dd") })
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ToDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalDays)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Reason)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DocumentName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ApprovalStatusName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Users2FirstName) @Html.DisplayFor(modelItem => item.Users2LastName)
+            </td>
+            <td>
+                @if ((Session["UserRole"] != null && Session["UserRole"].ToString().Equals("Admin")) && item.ApprovalStatusName == "Pending")
+                {
+                    @Html.ActionLink("Approve", "ApproveOrReject", new { id = item.Id, isApprove = true })
+                    <span>|</span>
+                    @Html.ActionLink("Reject", "ApproveOrReject", new { id = item.Id, isApprove = false })
+                }
+            </td>
+        </tr>
+    }
+
+</table>
